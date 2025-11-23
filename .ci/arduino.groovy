@@ -189,7 +189,7 @@ def buildArduinoMega(config, sketches, String key) {
 }
 
 def buildSTM32F1(config, sketches, String key) {
-	def fqbn = '-fqbn stm32duino:STM32F1:genericSTM32F103C:device_variant=STM32F103C8,upload_method=DFUUploadMethod,cpu_speed=speed_72mhz,opt=osstd'
+	def fqbn = '-fqbn STMicroelectronics:stm32:GenF1:pnum=BLUEPILL_F103C8,upload_method=swdMethod,xserial=generic,usb=none,xusb=FS,opt=osstd,dbg=none,rtlib=nano'
 	config.pr.setBuildStatus(config, 'PENDING', 'Toll gate (STM32F1 - '+key+')', 'Building...', '${BUILD_URL}flowGraphTable/')
 	try {
 		for (sketch = 0; sketch < sketches.size(); sketch++) {
@@ -220,6 +220,41 @@ def buildSTM32F1(config, sketches, String key) {
 		config.pr.setBuildStatus(config, 'FAILURE', 'Toll gate (STM32F1 - '+key+')', 'Build error', '${BUILD_URL}')
 	} else {
 		config.pr.setBuildStatus(config, 'SUCCESS', 'Toll gate (STM32F1 - '+key+')', 'Pass', '')
+	}
+}
+
+def buildSTM32F4(config, sketches, String key) {
+	def fqbn = '-fqbn STMicroelectronics:stm32:GenF4:pnum=BLACKPILL_F411CE,upload_method=swdMethod,xserial=generic,usb=none,xusb=FS,opt=osstd,dbg=none,rtlib=nano'
+	config.pr.setBuildStatus(config, 'PENDING', 'Toll gate (STM32F4 - '+key+')', 'Building...', '${BUILD_URL}flowGraphTable/')
+	try {
+		for (sketch = 0; sketch < sketches.size(); sketch++) {
+			if (sketches[sketch].path != config.library_root+'examples/GatewayESP8266/GatewayESP8266.ino' &&
+					sketches[sketch].path != config.library_root+'examples/GatewayESP8266MQTTClient/GatewayESP8266MQTTClient.ino' &&
+					sketches[sketch].path != config.library_root+'examples/GatewayESP8266SecureMQTTClient/GatewayESP8266SecureMQTTClient.ino' &&
+					sketches[sketch].path != config.library_root+'examples/GatewayESP8266OTA/GatewayESP8266OTA.ino' &&
+					sketches[sketch].path != config.library_root+'examples/GatewayESP32/GatewayESP32.ino' &&
+					sketches[sketch].path != config.library_root+'examples/GatewayESP32OTA/GatewayESP32OTA.ino' &&
+					sketches[sketch].path != config.library_root+'examples/GatewayESP32MQTTClient/GatewayESP32MQTTClient.ino' &&
+					sketches[sketch].path != config.library_root+'examples/SensebenderGatewaySerial/SensebenderGatewaySerial.ino') {
+				buildArduino(config, fqbn, sketches[sketch].path, key+'_STM32F4')
+			}
+		}
+	} catch (ex) {
+		echo "Build failed with: "+ ex.toString()
+		config.pr.setBuildStatus(config, 'FAILURE', 'Toll gate (STM32F4 - '+key+')', 'Build error', '${BUILD_URL}')
+		throw ex
+	} finally {
+		parseWarnings(key+'_STM32F4')
+	}
+	if (currentBuild.currentResult == 'UNSTABLE') {
+		config.pr.setBuildStatus(config, 'ERROR', 'Toll gate (STM32F4 - '+key+')', 'Warnings found', '${BUILD_URL}warnings2Result/new')
+		if (config.is_pull_request) {
+			error 'Terminated due to warnings found'
+		}
+	} else if (currentBuild.currentResult == 'FAILURE') {
+		config.pr.setBuildStatus(config, 'FAILURE', 'Toll gate (STM32F4 - '+key+')', 'Build error', '${BUILD_URL}')
+	} else {
+		config.pr.setBuildStatus(config, 'SUCCESS', 'Toll gate (STM32F4 - '+key+')', 'Pass', '')
 	}
 }
 
