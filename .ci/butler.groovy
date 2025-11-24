@@ -110,7 +110,7 @@ def call(config) {
 		])
 	}
 
-	ret = sh(returnStatus: true,
+	def ret = sh(returnStatus: true,
 		script:"""#!/bin/bash
 							cd ${config.repository_root}/.ci
 							./butler.sh""")
