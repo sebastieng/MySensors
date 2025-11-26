@@ -7,8 +7,8 @@ def buildArduino(config, String buildFlags, String sketch, String key) {
     def build_path       = "build/${key}"
     def build_path_cmd       = "--build-path ${build_path}"
 
-    // Optional parallel jobs (defaults to 4 if nothing is set)
-    def jobs = config.arduino_jobs ?: '4'
+    // Optional parallel jobs (defaults to 2 if nothing is set)
+    def jobs = config.arduino_jobs ?: '2'
     def jobsOpt = jobs ? "--jobs ${jobs}" : ""
 
     // If the board-specific flags already contain --warnings, don't add another one
