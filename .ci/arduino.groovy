@@ -369,7 +369,7 @@ def buildESP32(config, sketches, String key) {
 
 def buildnRF52(config, sketches, String key) {
 	def fqbn = '--fqbn sandeepmistry:nRF5:Generic_nRF52832:softdevice=none,lfclk=lfxo'
-	config.pr.setBuildStatus(config, 'PENDING', 'Toll gate (nRF5 - '+key+')', 'Building...', '${BUILD_URL}flowGraphTable/')
+	config.pr.setBuildStatus(config, 'PENDING', 'Toll gate (nRF52 - '+key+')', 'Building...', '${BUILD_URL}flowGraphTable/')
 	try {
 		sketches.each { sketch ->
 			if (sketch.path != config.library_root+'examples/BatteryPoweredSensor/BatteryPoweredSensor.ino' &&
