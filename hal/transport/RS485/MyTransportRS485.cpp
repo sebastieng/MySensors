@@ -144,7 +144,7 @@ bool _serialProcess()
 		// the buffer match the SOH/STX pair, and the destination station ID matches
 		// our ID, save the header information and progress to the next state.
 		case 0:
-			memcpy(&_header[0],&_header[1],5);
+			memmove(&_header[0],&_header[1],5);
 			_header[5] = inch;
 			if ((_header[0] == SOH) && (_header[5] == STX) && (_header[1] != _header[2])) {
 				_recCalcCS = 0;
